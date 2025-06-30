@@ -77,30 +77,30 @@ with tab1:
         pie_fig.update_layout(title_text="Sales Method Share")
         st.plotly_chart(pie_fig, use_container_width = True)
 
-        st.markdown("#### 제품-지역별 판매 히트맵")
-        heatmap_data = pd.pivot_table(
-            filtered,
-            index = "Product",
-            columns = "Region",
-            values = "Units Sold",
-            aggfunc = "sum"
-        ).fillna(0)
-
-        import plotly.express as px
-        if not heatmap_data.empty:
-            heatmap_fig = px.imshow(
-                heatmap_data.values,
-                labels = dict(x="Region", y="Product", color="Units Sold"),
-                x = heatmap_data.columns,
-                y = heatmap_data.index,
-                color_continuous_scale = "YlGnBu",
-                text_auto = True,
-                aspect = "auto",
-                title = "Units Sold by Product and Region"
-            )
-            st.plotly_chart(heatmap_fig, use_container_width = True)
-        else:
-            st.info("No data to display for heatmap.")
+    st.markdown("#### 제품-지역별 판매 히트맵")
+    heatmap_data = pd.pivot_table(
+        filtered,
+        index = "Product",
+        columns = "Region",
+        values = "Units Sold",
+        aggfunc = "sum"
+    ).fillna(0)
+    import plotly.express as px
+    if not heatmap_data.empty:
+        heatmap_fig = px.imshow(
+            heatmap_data.values,
+            labels = dict(x="Region", y="Product", color="Units Sold"),
+            x = heatmap_data.columns,
+            y = heatmap_data.index,
+            color_continuous_scale = "YlGnBu",
+            text_auto = True,
+            aspect = "auto",
+            title = "Units Sold by Product and Region"
+        )
+        st.plotly_chart(heatmap_fig, use_container_width = True)
+    
+    else:
+        st.info("No data to display for heatmap.")
 
 # 소매점/제품 분석
 with tab2:
