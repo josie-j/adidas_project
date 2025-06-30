@@ -8,10 +8,15 @@ import plotly.graph_objects as go
 st.set_page_config(page_title="Adidas US Sales Dashboard", layout="wide")
 st.title("👟 Adidas US Sales Data Dashboard")
 
-# 데이터 불러오기 및 전처리
+# 2. 데이터 불러오기 및 전처리
 data = pd.read_csv("https://raw.githubusercontent.com/myoh0623/dataset/refs/heads/main/adidas_us_sales_datasets.csv", encoding='utf-8')
 data.columns = data.columns.str.strip()
 
+# pd.Series.replace(pattern, replacement, regex=False)
+# pattern: 바꾸려는 문자나 패턴
+# replacement: 바꿀 문자
+# regex= True: pattern을 정규표현식(regular expression) 으로 처리하겠다는 뜻
+# [] 안에 있는 표현 모두 인식
 for col in ["Price per Unit", "Total Sales", "Operating Profit"]:
     data[col] = data[col].replace('[\\$,]', '', regex=True).astype(float)
 data["Units Sold"] = data["Units Sold"].replace('[,]', '', regex=True).astype(int)
@@ -19,12 +24,12 @@ data["Operating Margin"] = data["Operating Margin"].replace('[\\%,]', '', regex=
 data["Invoice Date"] = pd.to_datetime(data["Invoice Date"], errors="coerce")
 data = data.dropna(subset=["Invoice Date"])
 
-# 파생 변수 생성
+# 3. 파생 변수 생성
 data["Profit Rate"] = data["Operating Margin"] * 0.01
 data["Year"] = data['Invoice Date'].dt.year
 data['Month'] = data['Invoice Date'].dt.month
 
-# 사이드바 필터 구현
+# 4. 사이드바 필터 구현
 st.sidebar.header('Filter Options')
 region = st.sidebar.multiselect('Region', options=sorted(data["Region"].dropna().unique()), default=list(data["Region"].dropna().unique()))
 retailer = st.sidebar.multiselect('Retailer', options=sorted(data["Retailer"].dropna().unique()), default=list(data["Retailer"].dropna().unique()))
@@ -38,7 +43,7 @@ filtered = data[
     data['Sales Method'].isin(sales_method)
 ]
 
-# 주요 지표 요약 표시
+# 5. 주요 지표 요약 표시
 st.markdown("## 📈 주요 지표")
 k1, k2, k3, k4 = st.columns(4)
 k1.metric("총 매출액 ($)", f"{filtered['Total Sales'].sum():,.0f}")
@@ -46,10 +51,10 @@ k2.metric("총 판매수량", f"{filtered['Units Sold'].sum():,}")
 k3.metric("평균 단가 ($)", f"{filtered}['Price per Unit'].mean():.2f")
 k4.metric("평균 마진율 (%)", f"{filtered}[Operating Margin].mean():.2f")
 
-# 탭 레이아웃 구성
+# 6. 탭 레이아웃 구성
 tab1, tab2, tab3 = st.tabs(["트렌드 및 분포", "소매점/제품", "심화 분석"])
 
-# 트렌드 및 분포 시각화
+# 7. 트렌드 및 분포 시각화
 with tab1:
     c1, c2 = st.columns([2, 1])
     with c1:
@@ -102,7 +107,7 @@ with tab1:
     else:
         st.info("No data to display for heatmap.")
 
-# 소매점/제품 분석
+# 8. 소매점/제품 분석
 with tab2:
     c3, c4 = st.columns(2)
     with c3:
@@ -125,7 +130,7 @@ with tab2:
     ).fillna(0)
     st.dataframe(pivot.astype(int))
 
-# 심화 분석
+# 9. 심화 분석
 with tab3:
     c5, c6 = st.columns(2)
     with c5:
@@ -157,7 +162,7 @@ with tab3:
     with st.expander("데이터 미리보기"):
         st.dataframe(filtered.head(20))
 
-# 인사이트 요약
+# 10. 인사이트 요약
 st.markdown("""
 ---
 ### 📌 인사이트 요약
