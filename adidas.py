@@ -78,7 +78,6 @@ with tab1:
         st.plotly_chart(pie_fig, use_container_width = True)
 
         st.markdown("#### 제품-지역별 판매 히트맵")
-        import plotly.express as px
         heatmap_data = pd.pivot_table(
             filtered,
             index = "Product",
@@ -87,6 +86,7 @@ with tab1:
             aggfunc = "sum"
         ).fillna(0)
 
+        import plotly.express as px
         if not heatmap_data.empty:
             heatmap_fig = px.imshow(
                 heatmap_data.values,
@@ -150,7 +150,7 @@ with tab3:
             color = "Sales Method",
             height = 300
         )
-        st.plotly_chart(scatter_fig,use_container_width= True)
+        st.plotly_chart(scatter_fig, use_container_width= True)
     else:
         st.info("No data to display for scatter plot.")
 
